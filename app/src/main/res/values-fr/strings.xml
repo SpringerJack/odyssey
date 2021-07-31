@@ -49,7 +49,6 @@
 
     <!-- saved playlists fragment -->
     <string name="empty_saved_playlists_message">Aucune liste de lecture trouvée</string>
-    <string name="playlist_type_global">Globale</string>
     <string name="playlist_type_local">Locale</string>
 
     <!-- bookmark fragment -->

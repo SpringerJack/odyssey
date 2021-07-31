@@ -23,7 +23,6 @@
 package org.gateshipone.odyssey.viewmodels;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -32,12 +31,13 @@ import androidx.lifecycle.ViewModelProvider;
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
-import org.gateshipone.odyssey.utils.MusicLibraryHelper;
+import org.gateshipone.odyssey.utils.GenericModelTaskRunner;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class PlaylistViewModel extends GenericViewModel<PlaylistModel> {
 
@@ -46,25 +46,18 @@ public class PlaylistViewModel extends GenericViewModel<PlaylistModel> {
      */
     private final boolean mAddHeader;
 
-    /**
-     * Flag if only playlists in the odyssey db should be loaded.
-     * Needed for saving/overriding playlists.
-     */
-    private final boolean mOnlyOdysseyPlaylists;
-
-    private PlaylistViewModel(@NonNull final Application application, final boolean addHeader, final boolean onlyOdysseyPlaylists) {
+    private PlaylistViewModel(@NonNull final Application application, final boolean addHeader) {
         super(application);
 
         mAddHeader = addHeader;
-        mOnlyOdysseyPlaylists = onlyOdysseyPlaylists;
     }
 
     @Override
     void loadData() {
-        new PlaylistLoaderTask(this).execute();
+        new GenericModelTaskRunner<PlaylistModel>().executeAsync(new PlaylistLoaderTask(this), this::setData);
     }
 
-    private static class PlaylistLoaderTask extends AsyncTask<Void, Void, List<PlaylistModel>> {
+    private static class PlaylistLoaderTask implements Callable<List<PlaylistModel>> {
 
         private final WeakReference<PlaylistViewModel> mViewModel;
 
@@ -73,7 +66,7 @@ public class PlaylistViewModel extends GenericViewModel<PlaylistModel> {
         }
 
         @Override
-        protected List<PlaylistModel> doInBackground(Void... voids) {
+        public List<PlaylistModel> call() throws Exception {
             final PlaylistViewModel model = mViewModel.get();
 
             if (model != null) {
@@ -85,11 +78,6 @@ public class PlaylistViewModel extends GenericViewModel<PlaylistModel> {
                     // add a dummy playlist for the choose playlist dialog
                     // this playlist represents the action to create a new playlist in the dialog
                     playlists.add(new PlaylistModel(application.getString(R.string.create_new_playlist), -1, PlaylistModel.PLAYLIST_TYPES.CREATE_NEW));
-                }
-
-                if (!model.mOnlyOdysseyPlaylists) {
-                    // add playlists from the mediastore
-                    playlists.addAll(MusicLibraryHelper.getAllPlaylists(application));
                 }
 
                 // add playlists from odyssey local storage
@@ -114,15 +102,6 @@ public class PlaylistViewModel extends GenericViewModel<PlaylistModel> {
 
             return null;
         }
-
-        @Override
-        protected void onPostExecute(List<PlaylistModel> result) {
-            final PlaylistViewModel model = mViewModel.get();
-
-            if (model != null) {
-                model.setData(result);
-            }
-        }
     }
 
     public static class PlaylistViewModelFactory extends ViewModelProvider.NewInstanceFactory {
@@ -131,18 +110,15 @@ public class PlaylistViewModel extends GenericViewModel<PlaylistModel> {
 
         private final boolean mAddHeader;
 
-        private final boolean mOnlyOdysseyPlaylists;
-
-        public PlaylistViewModelFactory(final Application application, final boolean addHeader, final boolean onlyOdysseyPlaylists) {
+        public PlaylistViewModelFactory(final Application application, final boolean addHeader) {
             mApplication = application;
             mAddHeader = addHeader;
-            mOnlyOdysseyPlaylists = onlyOdysseyPlaylists;
         }
 
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return (T) new PlaylistViewModel(mApplication, mAddHeader, mOnlyOdysseyPlaylists);
+            return (T) new PlaylistViewModel(mApplication, mAddHeader);
         }
     }
 }

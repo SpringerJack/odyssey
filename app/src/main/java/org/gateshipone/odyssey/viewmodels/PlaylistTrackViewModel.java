@@ -23,7 +23,6 @@
 package org.gateshipone.odyssey.viewmodels;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -33,12 +32,13 @@ import org.gateshipone.odyssey.models.FileModel;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
-import org.gateshipone.odyssey.utils.MusicLibraryHelper;
+import org.gateshipone.odyssey.utils.GenericModelTaskRunner;
 import org.gateshipone.odyssey.utils.PlaylistParser;
 import org.gateshipone.odyssey.utils.PlaylistParserFactory;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class PlaylistTrackViewModel extends GenericViewModel<TrackModel> {
 
@@ -55,11 +55,10 @@ public class PlaylistTrackViewModel extends GenericViewModel<TrackModel> {
 
     @Override
     void loadData() {
-        new PlaylistLoaderTask(this).execute();
+        new GenericModelTaskRunner<TrackModel>().executeAsync(new PlaylistLoaderTask(this), this::setData);
     }
 
-    private static class PlaylistLoaderTask extends AsyncTask<Void, Void, List<TrackModel>> {
-
+    private static class PlaylistLoaderTask implements Callable<List<TrackModel>> {
         private final WeakReference<PlaylistTrackViewModel> mViewModel;
 
         PlaylistLoaderTask(final PlaylistTrackViewModel viewModel) {
@@ -67,7 +66,7 @@ public class PlaylistTrackViewModel extends GenericViewModel<TrackModel> {
         }
 
         @Override
-        protected List<TrackModel> doInBackground(Void... voids) {
+        public List<TrackModel> call() throws Exception {
             final PlaylistTrackViewModel model = mViewModel.get();
 
             if (model != null) {
@@ -76,8 +75,6 @@ public class PlaylistTrackViewModel extends GenericViewModel<TrackModel> {
                 final Application application = model.getApplication();
 
                 switch (playlist.getPlaylistType()) {
-                    case MEDIASTORE:
-                        return MusicLibraryHelper.getTracksForPlaylist(playlist.getPlaylistId(), application);
                     case ODYSSEY_LOCAL:
                         return OdysseyDatabaseManager.getInstance(application).getTracksForPlaylist(playlist.getPlaylistId());
                     case FILE:
@@ -90,15 +87,6 @@ public class PlaylistTrackViewModel extends GenericViewModel<TrackModel> {
             }
 
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<TrackModel> result) {
-            final PlaylistTrackViewModel model = mViewModel.get();
-
-            if (model != null) {
-                model.setData(result);
-            }
         }
     }
 

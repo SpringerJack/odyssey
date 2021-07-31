@@ -456,7 +456,11 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
         // Request the alarm manager and quit the alert with the given TIMEOUT_INTENT_QUIT_REQUEST_CODE
         AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         Intent quitIntent = new Intent(ACTION_QUIT);
-        PendingIntent quitPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_QUIT_REQUEST_CODE, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        PendingIntent quitPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_QUIT_REQUEST_CODE, quitIntent, intentFlags);
         am.cancel(quitPI);
     }
 
@@ -495,7 +499,11 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
 
         final AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         final Intent quitIntent = new Intent(ACTION_SLEEPSTOP);
-        final PendingIntent sleepPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_SLEEP_REQUEST_CODE, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        final PendingIntent sleepPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_SLEEP_REQUEST_CODE, quitIntent, intentFlags);
         am.set(AlarmManager.RTC, System.currentTimeMillis() + durationMS, sleepPI);
         mStopAfterCurrent = stopAfterCurrent;
     }
@@ -508,7 +516,11 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
 
         final AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         final Intent quitIntent = new Intent(ACTION_SLEEPSTOP);
-        final PendingIntent sleepPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_SLEEP_REQUEST_CODE, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        final PendingIntent sleepPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_SLEEP_REQUEST_CODE, quitIntent, intentFlags);
         am.cancel(sleepPI);
     }
 
@@ -531,7 +543,11 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
             // Start an alert within the AlarmManager to quit this service after a timeout (defined in SERVICE_CANCEL_TIME)
             AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
             Intent quitIntent = new Intent(ACTION_QUIT);
-            PendingIntent quitPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_QUIT_REQUEST_CODE, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                intentFlags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+            PendingIntent quitPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_QUIT_REQUEST_CODE, quitIntent, intentFlags);
             am.set(AlarmManager.RTC, System.currentTimeMillis() + SERVICE_CANCEL_TIME, quitPI);
 
             // Broadcast simple.last.fm.scrobble broadcast to inform about pause state
@@ -1453,9 +1469,6 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
         final List<TrackModel> playlistTracks = new ArrayList<>();
 
         switch (playlist.getPlaylistType()) {
-            case MEDIASTORE:
-                playlistTracks.addAll(MusicLibraryHelper.getTracksForPlaylist(playlist.getPlaylistId(), getApplicationContext()));
-                break;
             case ODYSSEY_LOCAL:
                 playlistTracks.addAll(mDatabaseManager.getTracksForPlaylist(playlist.getPlaylistId()));
                 break;

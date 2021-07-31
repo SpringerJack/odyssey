@@ -23,7 +23,6 @@
 package org.gateshipone.odyssey.viewmodels;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -32,10 +31,12 @@ import androidx.lifecycle.ViewModelProvider;
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.models.BookmarkModel;
 import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
+import org.gateshipone.odyssey.utils.GenericModelTaskRunner;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class BookmarkViewModel extends GenericViewModel<BookmarkModel> {
 
@@ -52,10 +53,10 @@ public class BookmarkViewModel extends GenericViewModel<BookmarkModel> {
 
     @Override
     void loadData() {
-        new BookmarkLoaderTask(this).execute();
+        new GenericModelTaskRunner<BookmarkModel>().executeAsync(new BookmarkLoaderTask(this), this::setData);
     }
 
-    private static class BookmarkLoaderTask extends AsyncTask<Void, Void, List<BookmarkModel>> {
+    private static class BookmarkLoaderTask implements Callable<List<BookmarkModel>> {
 
         private final WeakReference<BookmarkViewModel> mViewModel;
 
@@ -64,7 +65,7 @@ public class BookmarkViewModel extends GenericViewModel<BookmarkModel> {
         }
 
         @Override
-        protected List<BookmarkModel> doInBackground(Void... voids) {
+        public List<BookmarkModel> call() throws Exception {
             final BookmarkViewModel model = mViewModel.get();
 
             if (model != null) {
@@ -83,15 +84,6 @@ public class BookmarkViewModel extends GenericViewModel<BookmarkModel> {
             }
 
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<BookmarkModel> result) {
-            final BookmarkViewModel model = mViewModel.get();
-
-            if (model != null) {
-                model.setData(result);
-            }
         }
     }
 

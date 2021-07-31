@@ -33,7 +33,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -47,6 +46,7 @@ import org.gateshipone.odyssey.BuildConfig;
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.models.FileModel;
 import org.gateshipone.odyssey.utils.FileExplorerHelper;
+import org.gateshipone.odyssey.utils.GenericModelTaskRunner;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 
 public class MediaScannerService extends Service {
     private static final String TAG = MediaScannerService.class.getSimpleName();
@@ -153,7 +154,11 @@ public class MediaScannerService extends Service {
 
             // Cancel action
             Intent nextIntent = new Intent(MediaScannerService.ACTION_CANCEL_MEDIASCANNING);
-            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                intentFlags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, nextIntent, intentFlags);
             NotificationCompat.Action cancelAction = new NotificationCompat.Action.Builder(R.drawable.ic_close_24dp, getString(R.string.dialog_action_cancel), nextPendingIntent).build();
 
             mBuilder.addAction(cancelAction);
@@ -182,7 +187,11 @@ public class MediaScannerService extends Service {
     }
 
     private void scanDirectory(FileModel basePath) {
-        new ListCreationTask(this).execute(basePath);
+        new GenericModelTaskRunner<FileModel>().executeAsync(new ScanDirectoryTask(this, basePath), result -> {
+            if (BuildConfig.DEBUG) {
+                Log.v(TAG, "Discovered " + result.size() + " tracks that are not in the library.");
+            }
+        });
     }
 
     private void scanFileList(List<FileModel> files) {
@@ -303,26 +312,25 @@ public class MediaScannerService extends Service {
         }
     }
 
-    private static class ListCreationTask extends AsyncTask<FileModel, Integer, List<FileModel>> {
+    private static class ScanDirectoryTask implements Callable<List<FileModel>> {
 
         private final WeakReference<MediaScannerService> mMediaScannerService;
+        private final FileModel mBaseDirectory;
 
-        public ListCreationTask(final MediaScannerService mediaScannerService) {
+        public ScanDirectoryTask(final MediaScannerService mediaScannerService, final FileModel baseDirectory) {
             mMediaScannerService = new WeakReference<>(mediaScannerService);
+            mBaseDirectory = baseDirectory;
         }
 
         @Override
-        protected List<FileModel> doInBackground(FileModel... params) {
+        public List<FileModel> call() throws Exception {
             final MediaScannerService mediaScannerService = mMediaScannerService.get();
 
             final List<FileModel> files = new ArrayList<>();
 
             if (mediaScannerService != null) {
 
-                files.addAll(FileExplorerHelper.getInstance().getMissingDBFiles(mediaScannerService.getApplicationContext(), params[0]));
-                if (BuildConfig.DEBUG) {
-                    Log.v(TAG, "Got missing tracks: " + files.size());
-                }
+                files.addAll(FileExplorerHelper.getInstance().getMissingDBFiles(mediaScannerService.getApplicationContext(), mBaseDirectory));
 
                 mediaScannerService.scanFileList(files);
             }

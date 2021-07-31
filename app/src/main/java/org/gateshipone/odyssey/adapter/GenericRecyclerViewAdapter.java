@@ -63,14 +63,13 @@ public abstract class GenericRecyclerViewAdapter<T extends GenericModel, VH exte
      * @param data Actual model data
      */
     public void swapModel(final List<T> data) {
-        if (data == null) {
-            mModelData.clear();
-            notifyDataSetChanged();
-        } else {
-            mModelData.clear();
+        mModelData.clear();
+
+        if (data != null) {
             mModelData.addAll(data);
-            notifyDataSetChanged();
         }
+
+        notifyDataSetChanged();
     }
 
     public T getItem(int position) {

@@ -255,7 +255,6 @@
 
     <!-- Thirdparty Licenses dialog -->
     <string name="odyssey_thirdparty_licenses_dialog_title">Licencje osób trzecich</string>
-    <string name="playlist_type_global">Globalna</string>
     <string name="playlist_type_local">Lokalna</string>
     <string name="dialog_no_browser_found_title">Brak przeglądarki</string>
     <string name="dialog_no_browser_found_message">Na urządzeniu nie jest zainstalowana przeglądarka internetu</string>

@@ -24,7 +24,6 @@ package org.gateshipone.odyssey.viewmodels;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -34,9 +33,11 @@ import androidx.preference.PreferenceManager;
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.models.ArtistModel;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
+import org.gateshipone.odyssey.utils.GenericModelTaskRunner;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class ArtistViewModel extends GenericViewModel<ArtistModel> {
 
@@ -46,10 +47,10 @@ public class ArtistViewModel extends GenericViewModel<ArtistModel> {
 
     @Override
     void loadData() {
-        new ArtistLoaderTask(this).execute();
+        new GenericModelTaskRunner<ArtistModel>().executeAsync(new ArtistLoaderTask(this), this::setData);
     }
 
-    private static class ArtistLoaderTask extends AsyncTask<Void, Void, List<ArtistModel>> {
+    private static class ArtistLoaderTask implements Callable<List<ArtistModel>> {
 
         private final WeakReference<ArtistViewModel> mViewModel;
 
@@ -58,7 +59,7 @@ public class ArtistViewModel extends GenericViewModel<ArtistModel> {
         }
 
         @Override
-        protected List<ArtistModel> doInBackground(Void... voids) {
+        public List<ArtistModel> call() throws Exception {
             final ArtistViewModel model = mViewModel.get();
 
             if (model != null) {
@@ -71,15 +72,6 @@ public class ArtistViewModel extends GenericViewModel<ArtistModel> {
             }
 
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<ArtistModel> result) {
-            final ArtistViewModel model = mViewModel.get();
-
-            if (model != null) {
-                model.setData(result);
-            }
         }
     }
 

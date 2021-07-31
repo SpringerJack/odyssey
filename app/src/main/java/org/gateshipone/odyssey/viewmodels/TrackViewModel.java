@@ -24,7 +24,6 @@ package org.gateshipone.odyssey.viewmodels;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -34,9 +33,11 @@ import androidx.preference.PreferenceManager;
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
+import org.gateshipone.odyssey.utils.GenericModelTaskRunner;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class TrackViewModel extends GenericViewModel<TrackModel> {
 
@@ -53,10 +54,10 @@ public class TrackViewModel extends GenericViewModel<TrackModel> {
 
     @Override
     void loadData() {
-        new TrackLoaderTask(this).execute();
+        new GenericModelTaskRunner<TrackModel>().executeAsync(new TrackLoaderTask(this), this::setData);
     }
 
-    private static class TrackLoaderTask extends AsyncTask<Void, Void, List<TrackModel>> {
+    private static class TrackLoaderTask implements Callable<List<TrackModel>> {
 
         private final WeakReference<TrackViewModel> mViewModel;
 
@@ -65,7 +66,7 @@ public class TrackViewModel extends GenericViewModel<TrackModel> {
         }
 
         @Override
-        protected List<TrackModel> doInBackground(Void... voids) {
+        public List<TrackModel> call() throws Exception {
             final TrackViewModel model = mViewModel.get();
 
             if (model != null) {
@@ -86,15 +87,6 @@ public class TrackViewModel extends GenericViewModel<TrackModel> {
             }
 
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<TrackModel> result) {
-            final TrackViewModel model = mViewModel.get();
-
-            if (model != null) {
-                model.setData(result);
-            }
         }
     }
 

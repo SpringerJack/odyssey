@@ -91,7 +91,7 @@ public class SavedPlaylistsFragment extends OdysseyFragment<PlaylistModel> imple
 
     @Override
     GenericViewModel<PlaylistModel> getViewModel() {
-        return new ViewModelProvider(this, new PlaylistViewModel.PlaylistViewModelFactory(getActivity().getApplication(), false, false)).get(PlaylistViewModel.class);
+        return new ViewModelProvider(this, new PlaylistViewModel.PlaylistViewModelFactory(getActivity().getApplication(), false)).get(PlaylistViewModel.class);
     }
 
     /**
@@ -226,13 +226,8 @@ public class SavedPlaylistsFragment extends OdysseyFragment<PlaylistModel> imple
         // delete current playlist
         boolean reloadData = false;
 
-        switch (clickedPlaylist.getPlaylistType()) {
-            case MEDIASTORE:
-                reloadData = MusicLibraryHelper.removePlaylist(clickedPlaylist.getPlaylistId(), getActivity().getApplicationContext());
-                break;
-            case ODYSSEY_LOCAL:
-                reloadData = OdysseyDatabaseManager.getInstance(getContext()).removePlaylist(clickedPlaylist.getPlaylistId());
-                break;
+        if (clickedPlaylist.getPlaylistType() == PlaylistModel.PLAYLIST_TYPES.ODYSSEY_LOCAL) {
+            reloadData = OdysseyDatabaseManager.getInstance(getContext()).removePlaylist(clickedPlaylist.getPlaylistId());
         }
 
         if (reloadData) {

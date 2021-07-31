@@ -357,12 +357,8 @@ public class ListViewItem extends GenericImageViewItem {
         setTitle(playlistTitle);
 
         switch (playlist.getPlaylistType()) {
-            case MEDIASTORE:
-                setSubtitle(context.getString(R.string.playlist_type_global));
-                setAddtionalSubtitle("");
-                break;
             case ODYSSEY_LOCAL:
-                setSubtitle(context.getString(R.string.playlist_type_local));
+                setSubtitle("");
                 String numberOfTracksString = "";
                 int numberOfTracks = playlist.getPlaylistTracks();
 

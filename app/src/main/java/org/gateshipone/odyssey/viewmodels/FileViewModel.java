@@ -23,17 +23,18 @@
 package org.gateshipone.odyssey.viewmodels;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.gateshipone.odyssey.models.FileModel;
+import org.gateshipone.odyssey.utils.GenericModelTaskRunner;
 import org.gateshipone.odyssey.utils.PermissionHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class FileViewModel extends GenericViewModel<FileModel> {
 
@@ -50,10 +51,10 @@ public class FileViewModel extends GenericViewModel<FileModel> {
 
     @Override
     void loadData() {
-        new FileLoaderTask(this).execute();
+        new GenericModelTaskRunner<FileModel>().executeAsync(new FileLoaderTask(this), this::setData);
     }
 
-    private static class FileLoaderTask extends AsyncTask<Void, Void, List<FileModel>> {
+    private static class FileLoaderTask implements Callable<List<FileModel>> {
 
         private final WeakReference<FileViewModel> mViewModel;
 
@@ -62,7 +63,7 @@ public class FileViewModel extends GenericViewModel<FileModel> {
         }
 
         @Override
-        protected List<FileModel> doInBackground(Void... voids) {
+        public List<FileModel> call() throws Exception {
             final FileViewModel model = mViewModel.get();
 
             if (model != null) {
@@ -70,15 +71,6 @@ public class FileViewModel extends GenericViewModel<FileModel> {
             }
 
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<FileModel> result) {
-            final FileViewModel model = mViewModel.get();
-
-            if (model != null) {
-                model.setData(result);
-            }
         }
     }
 

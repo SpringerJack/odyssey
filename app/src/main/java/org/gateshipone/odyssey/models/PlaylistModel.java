@@ -35,8 +35,6 @@ public class PlaylistModel implements GenericModel, Parcelable {
         UNKNOWN,
         // represents a playlist that should be created
         CREATE_NEW,
-        // playlist is stored in the android mediastore
-        MEDIASTORE,
         // playlist is stored in the odyssey database
         ODYSSEY_LOCAL,
         // playlist is a playlist file like m3u
@@ -49,7 +47,7 @@ public class PlaylistModel implements GenericModel, Parcelable {
     private final String mPlaylistName;
 
     /**
-     * Unique id to identify the playlist in the mediastore or the odyssey db.
+     * Unique id to identify the playlist in the odyssey db.
      */
     private final long mPlaylistId;
 

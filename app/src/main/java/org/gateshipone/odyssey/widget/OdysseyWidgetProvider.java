@@ -200,17 +200,25 @@ OdysseyWidgetProvider extends AppWidgetProvider {
             // add intent only if playing is active
             mainIntent.putExtra(OdysseyMainActivity.MAINACTIVITY_INTENT_EXTRA_REQUESTEDVIEW, OdysseyMainActivity.REQUESTEDVIEW.NOWPLAYING.ordinal());
         }
-        PendingIntent mainPendingIntent = PendingIntent.getActivity(context, INTENT_OPENGUI, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        PendingIntent mainPendingIntent = PendingIntent.getActivity(context, INTENT_OPENGUI, mainIntent, intentFlags);
         views.setOnClickPendingIntent(R.id.widget_covert_artwork, mainPendingIntent);
 
         // Play/Pause action
         Intent playPauseIntent = new Intent(context, PlaybackService.class);
         playPauseIntent.putExtra("action", PlaybackService.ACTION_TOGGLEPAUSE);
         PendingIntent playPausePendingIntent;
+        intentFlags = PendingIntent.FLAG_CANCEL_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            playPausePendingIntent = PendingIntent.getForegroundService(context, INTENT_PLAYPAUSE, playPauseIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            playPausePendingIntent = PendingIntent.getForegroundService(context, INTENT_PLAYPAUSE, playPauseIntent, intentFlags);
         } else {
-            playPausePendingIntent = PendingIntent.getService(context, INTENT_PLAYPAUSE, playPauseIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            playPausePendingIntent = PendingIntent.getService(context, INTENT_PLAYPAUSE, playPauseIntent, intentFlags);
         }
         views.setOnClickPendingIntent(R.id.widget_play_btn, playPausePendingIntent);
 
@@ -219,9 +227,9 @@ OdysseyWidgetProvider extends AppWidgetProvider {
         prevIntent.putExtra("action", PlaybackService.ACTION_PREVIOUS);
         PendingIntent prevPendingIntent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            prevPendingIntent = PendingIntent.getForegroundService(context, INTENT_PREVIOUS, prevIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            prevPendingIntent = PendingIntent.getForegroundService(context, INTENT_PREVIOUS, prevIntent, intentFlags);
         } else {
-            prevPendingIntent = PendingIntent.getService(context, INTENT_PREVIOUS, prevIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            prevPendingIntent = PendingIntent.getService(context, INTENT_PREVIOUS, prevIntent, intentFlags);
         }
         views.setOnClickPendingIntent(R.id.widget_prev_btn, prevPendingIntent);
 
@@ -230,9 +238,9 @@ OdysseyWidgetProvider extends AppWidgetProvider {
         nextIntent.putExtra("action", PlaybackService.ACTION_NEXT);
         PendingIntent nextPendingIntent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            nextPendingIntent = PendingIntent.getForegroundService(context, INTENT_NEXT, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            nextPendingIntent = PendingIntent.getForegroundService(context, INTENT_NEXT, nextIntent, intentFlags);
         } else {
-            nextPendingIntent = PendingIntent.getService(context, INTENT_NEXT, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            nextPendingIntent = PendingIntent.getService(context, INTENT_NEXT, nextIntent, intentFlags);
         }
         views.setOnClickPendingIntent(R.id.widget_next_btn, nextPendingIntent);
 
@@ -241,7 +249,7 @@ OdysseyWidgetProvider extends AppWidgetProvider {
     }
 
     private class CoverReceiver implements CoverBitmapLoader.CoverBitmapReceiver {
-        private Context mContext;
+        private final Context mContext;
 
         CoverReceiver(Context context) {
             mContext = context;
