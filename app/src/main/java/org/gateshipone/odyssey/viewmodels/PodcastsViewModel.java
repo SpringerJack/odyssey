@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Team Gateship-One
+ * Copyright (C) 2021 Team Gateship-One
  * (Hendrik Borghorst & Frederik Luetkes)
  *
  * The AUTHORS.md file contains a detailed contributors list:
@@ -23,66 +23,44 @@
 package org.gateshipone.odyssey.viewmodels;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 
-import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class TrackViewModel extends GenericViewModel<TrackModel> {
+public class PodcastsViewModel extends GenericViewModel<TrackModel> {
 
-    /**
-     * The album key if tracks of a specific album should be loaded.
-     */
-    private final long mAlbumId;
-
-    private TrackViewModel(@NonNull final Application application, final long albumId) {
+    private PodcastsViewModel(@NonNull final Application application) {
         super(application);
-
-        mAlbumId = albumId;
     }
 
-    @Override
     void loadData() {
-        new TrackLoaderTask(this).execute();
+        new PodcastsLoaderTask(this).execute();
     }
 
-    private static class TrackLoaderTask extends AsyncTask<Void, Void, List<TrackModel>> {
+    private static class PodcastsLoaderTask extends AsyncTask<Void, Void, List<TrackModel>> {
 
-        private final WeakReference<TrackViewModel> mViewModel;
+        private final WeakReference<PodcastsViewModel> mViewModel;
 
-        TrackLoaderTask(final TrackViewModel viewModel) {
+        PodcastsLoaderTask(final PodcastsViewModel viewModel) {
             mViewModel = new WeakReference<>(viewModel);
         }
 
         @Override
         protected List<TrackModel> doInBackground(Void... voids) {
-            final TrackViewModel model = mViewModel.get();
+            final PodcastsViewModel model = mViewModel.get();
 
             if (model != null) {
                 final Application application = model.getApplication();
 
-                if (model.mAlbumId == -1) {
-                    // load all tracks
-                    return MusicLibraryHelper.getAllTracks(null, application);
-                } else {
-                    // load album tracks
-
-                    // read order preference
-                    final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(application);
-                    final String orderKey = sharedPref.getString(application.getString(R.string.pref_album_tracks_sort_order_key), application.getString(R.string.pref_album_tracks_sort_default));
-
-                    return MusicLibraryHelper.getTracksForAlbum(model.mAlbumId, orderKey, application);
-                }
+                return MusicLibraryHelper.getAllPodcasts(application);
             }
 
             return null;
@@ -90,7 +68,7 @@ public class TrackViewModel extends GenericViewModel<TrackModel> {
 
         @Override
         protected void onPostExecute(List<TrackModel> result) {
-            final TrackViewModel model = mViewModel.get();
+            final PodcastsViewModel model = mViewModel.get();
 
             if (model != null) {
                 model.setData(result);
@@ -98,25 +76,18 @@ public class TrackViewModel extends GenericViewModel<TrackModel> {
         }
     }
 
-    public static class TrackViewModelFactory extends ViewModelProvider.NewInstanceFactory {
+    public static class PodcastsViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
         private final Application mApplication;
 
-        private final long mAlbumId;
-
-        public TrackViewModelFactory(final Application application, final long albumId) {
+        public PodcastsViewModelFactory(final Application application) {
             mApplication = application;
-            mAlbumId = albumId;
-        }
-
-        public TrackViewModelFactory(final Application application) {
-            this(application, -1);
         }
 
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return (T) new TrackViewModel(mApplication, mAlbumId);
+            return (T) new PodcastsViewModel(mApplication);
         }
     }
 }

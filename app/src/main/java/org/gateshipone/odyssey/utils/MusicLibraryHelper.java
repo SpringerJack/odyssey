@@ -556,6 +556,43 @@ public class MusicLibraryHelper {
         return allTracks;
     }
 
+    public static List<TrackModel> getAllPodcasts(final Context context) {
+        final List<TrackModel> allTracks = new ArrayList<>();
+
+        // filter non music
+        final String[] whereVal = {"1"};
+
+        final String where = ProjectionTracks.IS_PODCAST + "=?";
+
+        final Cursor cursor = PermissionHelper.query(context, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, ProjectionTracks.PROJECTION, where, whereVal, ProjectionTracks.TITLE + " COLLATE NOCASE");
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+
+                do {
+                    final String trackName = cursor.getString(cursor.getColumnIndex(ProjectionTracks.TITLE));
+                    final long duration = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.DURATION));
+                    final int number = cursor.getInt(cursor.getColumnIndex(ProjectionTracks.TRACK));
+                    final String artistName = cursor.getString(cursor.getColumnIndex(ProjectionTracks.ARTIST));
+                    final long artistId = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.ARTIST_ID));
+                    final String albumName = cursor.getString(cursor.getColumnIndex(ProjectionTracks.ALBUM));
+                    final long albumId = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.ALBUM_ID));
+                    final long id = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.ID));
+
+                    final Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+
+                    // add the track
+                    allTracks.add(new TrackModel(trackName, artistName, artistId, albumName, albumId, duration, number, uri, id));
+
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        }
+
+        return allTracks;
+    }
+
     /**
      * Return a list of all albums in the MediaStore.
      *

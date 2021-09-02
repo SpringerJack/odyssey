@@ -92,6 +92,7 @@ class MediaStoreProjections {
         String ID = PROJECTION[10];
 
         String IS_MUSIC = MediaStore.Audio.Media.IS_MUSIC;
+        String IS_PODCAST = MediaStore.Audio.Media.IS_PODCAST;
     }
 
     interface ProjectionPlaylists {

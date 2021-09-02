@@ -77,6 +77,7 @@ import org.gateshipone.odyssey.fragments.InformationSettingsFragment;
 import org.gateshipone.odyssey.fragments.MyMusicFragment;
 import org.gateshipone.odyssey.fragments.OdysseyFragment;
 import org.gateshipone.odyssey.fragments.PlaylistTracksFragment;
+import org.gateshipone.odyssey.fragments.PodcastsFragment;
 import org.gateshipone.odyssey.fragments.RecentAlbumsFragment;
 import org.gateshipone.odyssey.fragments.SavedPlaylistsFragment;
 import org.gateshipone.odyssey.fragments.SettingsFragment;
@@ -239,6 +240,8 @@ public class OdysseyMainActivity extends GenericActivity
                 fragment = SettingsFragment.newInstance();
             } else if (navId == R.id.nav_my_music) {
                 fragment = MyMusicFragment.newInstance(getDefaultTab());
+            } else if (navId == R.id.nav_podcasts) {
+                fragment = PodcastsFragment.newInstance();
             } else {
                 fragment = MyMusicFragment.newInstance(getDefaultTab());
             }
@@ -578,6 +581,8 @@ public class OdysseyMainActivity extends GenericActivity
             fragment = SettingsFragment.newInstance();
         } else if (id == R.id.nav_information) {
             fragment = InformationSettingsFragment.newInstance();
+        } else if (id == R.id.nav_podcasts) {
+            fragment = PodcastsFragment.newInstance();
         }
 
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
