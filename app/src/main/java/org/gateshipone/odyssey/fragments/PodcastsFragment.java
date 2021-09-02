@@ -24,9 +24,11 @@ package org.gateshipone.odyssey.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.gateshipone.odyssey.R;
+import org.gateshipone.odyssey.activities.GenericActivity;
 import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.utils.ThemeUtils;
@@ -41,7 +44,7 @@ import org.gateshipone.odyssey.viewmodels.GenericViewModel;
 import org.gateshipone.odyssey.viewmodels.PodcastsViewModel;
 import org.gateshipone.odyssey.viewmodels.TrackViewModel;
 
-public class PodcastsFragment extends OdysseyFragment<TrackModel> {
+public class PodcastsFragment extends OdysseyFragment<TrackModel> implements AdapterView.OnItemClickListener {
 
     public static PodcastsFragment newInstance() {
         return new PodcastsFragment();
@@ -71,7 +74,7 @@ public class PodcastsFragment extends OdysseyFragment<TrackModel> {
         mAdapter = new TracksAdapter(getActivity());
 
         mListView.setAdapter(mAdapter);
-//        mListView.setOnItemClickListener(this);
+        mListView.setOnItemClickListener(this);
 
         // get empty view
         mEmptyView = view.findViewById(R.id.empty_view);
@@ -85,13 +88,39 @@ public class PodcastsFragment extends OdysseyFragment<TrackModel> {
         getViewModel().getData().observe(getViewLifecycleOwner(), this::onDataReady);
     }
 
+
+    /**
+     * Called when the fragment resumes.
+     */
     @Override
     public void onResume() {
         super.onResume();
+
+        if (mToolbarAndFABCallback != null) {
+            // set toolbar behaviour and title
+            // TODO use resource for title
+            mToolbarAndFABCallback.setupToolbar("Podcasts", false, true, false);
+        }
     }
 
     @Override
     GenericViewModel<TrackModel> getViewModel() {
         return new ViewModelProvider(this, new PodcastsViewModel.PodcastsViewModelFactory(getActivity().getApplication())).get(PodcastsViewModel.class);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // TODO adjust to click action from settings
+        playPodcast(position, true);
+    }
+
+    private void playPodcast(final int position, final boolean clearPlaylist) {
+//        final PodcastModel podcast = mAdapter.getItem(position);
+//
+//        try {
+//            ((GenericActivity) getActivity()).getPlaybackService().playPodcast(podcast, clearPlaylist);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
     }
 }
