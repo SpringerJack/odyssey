@@ -115,12 +115,23 @@ public class PodcastsFragment extends OdysseyFragment<TrackModel> implements Ada
     }
 
     private void playPodcast(final int position, final boolean clearPlaylist) {
-//        final PodcastModel podcast = mAdapter.getItem(position);
-//
-//        try {
-//            ((GenericActivity) getActivity()).getPlaybackService().playPodcast(podcast, clearPlaylist);
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
+        final TrackModel podcast = mAdapter.getItem(position);
+
+        try {
+            ((GenericActivity) getActivity()).getPlaybackService().playTrack(podcast, clearPlaylist);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void enqueuePodcast(int position, boolean asNext) {
+        final TrackModel track = mAdapter.getItem(position);
+
+        try {
+            ((GenericActivity) getActivity()).getPlaybackService().enqueueTrack(track, asNext);
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }
