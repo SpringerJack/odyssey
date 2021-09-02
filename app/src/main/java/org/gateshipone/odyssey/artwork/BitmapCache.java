@@ -30,6 +30,7 @@ import androidx.collection.LruCache;
 
 import org.gateshipone.odyssey.models.AlbumModel;
 import org.gateshipone.odyssey.models.ArtistModel;
+import org.gateshipone.odyssey.models.TrackModel;
 
 import java.util.Map;
 
@@ -56,6 +57,8 @@ public class BitmapCache {
      * Hash prefix for artist images
      */
     private static final String ARTIST_PREFIX = "B_";
+
+    private static final String TRACK_PREFIX = "C_";
 
     /**
      * Private cache instance
@@ -187,13 +190,38 @@ public class BitmapCache {
 
         final long artistId = artist.getArtistID();
 
-        // Use albumId as key if available
+        // Use artistId as key if available
         if (artistId != -1) {
             hashString += String.valueOf(artistId);
             return hashString;
         }
 
         hashString += artist.getArtistName();
+
+        return hashString;
+    }
+
+    public synchronized Bitmap requestTrackImage(TrackModel track) {
+        return mCache.get(getTrackHash(track));
+    }
+
+    public synchronized void putTrackImage(TrackModel track, Bitmap bm) {
+        if (bm != null) {
+            mCache.put(getTrackHash(track), bm);
+        }
+    }
+
+    private String getTrackHash(TrackModel track) {
+        String hashString = TRACK_PREFIX;
+
+        final long trackId = track.getTrackId();
+
+        if(trackId != -1) {
+            hashString += String.valueOf(trackId);
+            return hashString;
+        }
+
+        hashString += track.getTrackName();
 
         return hashString;
     }

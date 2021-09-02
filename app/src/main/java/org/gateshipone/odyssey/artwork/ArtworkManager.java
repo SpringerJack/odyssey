@@ -336,6 +336,37 @@ public class ArtworkManager implements ArtProvider.ArtFetchError, InsertImageTas
             return null;
         }
 
+        // in some cases images with a size of 0 are requested, use a minimum size in this case
+        // a higher resolution will be requested later anyway
+        final int requestedWidth = Math.max(mMinimumImageSizeValue, width);
+        final int requestedHeight = Math.max(mMinimumImageSizeValue, height);
+
+        if (!skipCache) {
+            // Try cache first
+            Bitmap cacheBitmap = BitmapCache.getInstance().requestTrackImage(track);
+            if (cacheBitmap != null && requestedWidth <= cacheBitmap.getWidth()
+                    && requestedHeight <= cacheBitmap.getHeight()) {
+                return cacheBitmap;
+            }
+        }
+
+        // Check local artwork database
+        if (!mUseLocalImages) {
+            // check for artworks in the android media framework
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Bitmap bm;
+
+                final Uri imageUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, track.getTrackId());
+                try {
+                    bm = mApplicationContext.getContentResolver().loadThumbnail(imageUri, new Size(requestedWidth, requestedHeight), null);
+                    BitmapCache.getInstance().putTrackImage(track, bm);
+                    return bm;
+                } catch (IOException ignored) {
+                    // use our own database instead
+                }
+            }
+        }
+
         // get album information for the current track
         AlbumModel album = MusicLibraryHelper.createAlbumModelFromId(track.getTrackAlbumId(), mApplicationContext);
         if (album == null) {
