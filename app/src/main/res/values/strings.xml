@@ -48,6 +48,7 @@
     <string name="fragment_title_settings">Settings</string>
     <string name="fragment_title_bookmarks">Bookmarks</string>
     <string name="fragment_title_recent_albums">Recently Added</string>
+    <string name="fragment_title_podcasts">Podcasts</string>
 
     <!-- saved playlists fragment -->
     <string name="empty_saved_playlists_message">No playlists found.</string>
@@ -60,6 +61,9 @@
 
     <!-- files fragment -->
     <string name="empty_directory_message">No supported formats or .nomedia file found.</string>
+
+    <!-- podcasts fragment -->
+    <string name="empty_podcasts_message">No podcasts found.</string>
 
     <!-- my music tab titles -->
     <string name="fragment_title_artists">Artists</string>
@@ -143,6 +147,7 @@
     <string name="context_menu_action_play_folder">Play folder</string>
     <string name="context_menu_action_enqueue_file">Add file to queue</string>
     <string name="context_menu_action_play_file">Play file</string>
+    <string name="context_menu_action_playpodcast">Play podcast</string>
 
     <!-- popup menu titles -->
     <string name="popup_menu_action_shuffleplaylist">Shuffle playlist</string>
