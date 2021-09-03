@@ -41,6 +41,7 @@ import androidx.preference.PreferenceManager;
 
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.activities.GenericActivity;
+import org.gateshipone.odyssey.adapter.PodcastsAdapter;
 import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.utils.PreferenceHelper;
@@ -77,7 +78,7 @@ public class PodcastsFragment extends OdysseyFragment<TrackModel> implements Ada
         // set swipe refresh listener
         mSwipeRefreshLayout.setOnRefreshListener(this::refreshContent);
 
-        mAdapter = new TracksAdapter(getActivity());
+        mAdapter = new PodcastsAdapter(getActivity());
 
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);

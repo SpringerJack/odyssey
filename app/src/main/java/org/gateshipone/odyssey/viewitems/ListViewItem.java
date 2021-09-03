@@ -167,6 +167,19 @@ public class ListViewItem extends GenericImageViewItem {
                 adapter);
     }
 
+    public static ListViewItem createPodcastItem(final Context context, final ScrollSpeedAdapter adapter) {
+        return new ListViewItem(
+                context,
+                R.layout.listview_item_image,
+                R.id.item_image,
+                R.id.item_image_switcher,
+                false,
+                false,
+                false,
+                adapter
+        );
+    }
+
     private ListViewItem(final Context context,
                          @LayoutRes final int layoutID,
                          @IdRes final int imageviewID,
@@ -417,6 +430,30 @@ public class ListViewItem extends GenericImageViewItem {
         setSubtitle(lastModifiedDateString);
 
         setIcon(icon);
+    }
+
+    public void setPodcast(final TrackModel podcast) {
+        // title (number + name)
+        String trackTitle = "";
+        String albumName = podcast.getTrackAlbumName();
+        String artistName = podcast.getTrackArtistName();
+
+        trackTitle += podcast.getTrackDisplayedName();
+
+        // subtitle (artist + album)
+        String trackSubtitle = albumName;
+        if (!trackSubtitle.isEmpty()) {
+            trackSubtitle += " - " + artistName;
+        } else {
+            trackSubtitle = artistName;
+        }
+
+        // duration
+        String trackDuration = FormatHelper.formatTracktimeFromMS(getContext(), podcast.getTrackDuration());
+
+        setTitle(trackTitle);
+        setSubtitle(trackSubtitle);
+        setAddtionalSubtitle(trackDuration);
     }
 
     /**
