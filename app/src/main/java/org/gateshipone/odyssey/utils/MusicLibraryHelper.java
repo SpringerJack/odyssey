@@ -564,7 +564,7 @@ public class MusicLibraryHelper {
 
         final String where = ProjectionTracks.IS_PODCAST + "=?";
 
-        final Cursor cursor = PermissionHelper.query(context, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, ProjectionTracks.PROJECTION, where, whereVal, ProjectionTracks.TITLE + " COLLATE NOCASE");
+        final Cursor cursor = PermissionHelper.query(context, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, ProjectionTracks.PROJECTION, where, whereVal, ProjectionTracks.DATE_ADDED + " DESC");
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {

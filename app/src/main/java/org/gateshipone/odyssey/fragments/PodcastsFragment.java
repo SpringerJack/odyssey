@@ -23,10 +23,12 @@
 package org.gateshipone.odyssey.fragments;
 
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,13 +38,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.activities.GenericActivity;
 import org.gateshipone.odyssey.adapter.PodcastsAdapter;
-import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.utils.PreferenceHelper;
 import org.gateshipone.odyssey.utils.ThemeUtils;
@@ -52,6 +55,10 @@ import org.gateshipone.odyssey.viewmodels.PodcastsViewModel;
 public class PodcastsFragment extends OdysseyFragment<TrackModel> implements AdapterView.OnItemClickListener {
 
     private PreferenceHelper.LIBRARY_TRACK_CLICK_ACTION mClickAction;
+
+    private String mSearchString;
+
+    private static final String PODCASTSFRAGMENT_SAVED_INSTANCE_SEARCH_STRING = "PodcastsFragment.SearchString";
 
     public static PodcastsFragment newInstance() {
         return new PodcastsFragment();
@@ -91,8 +98,16 @@ public class PodcastsFragment extends OdysseyFragment<TrackModel> implements Ada
 
         registerForContextMenu(mListView);
 
+        // activate options menu in toolbar
+        setHasOptionsMenu(true);
+
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mClickAction = PreferenceHelper.getClickAction(sharedPreferences, getContext());
+
+        // try to resume the saved search string
+        if (savedInstanceState != null) {
+            mSearchString = savedInstanceState.getString(PODCASTSFRAGMENT_SAVED_INSTANCE_SEARCH_STRING);
+        }
 
         // setup observer for the live data
         getViewModel().getData().observe(getViewLifecycleOwner(), this::onDataReady);
@@ -167,6 +182,36 @@ public class PodcastsFragment extends OdysseyFragment<TrackModel> implements Ada
         return super.onContextItemSelected(item);
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.options_menu_podcasts_fragment, menu);
+
+        // get tint color
+        int tintColor = ThemeUtils.getThemeColor(getContext(), R.attr.odyssey_color_text_accent);
+
+        Drawable drawable = menu.findItem(R.id.action_search).getIcon();
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, tintColor);
+        menu.findItem(R.id.action_search).setIcon(drawable);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        // Check if a search string is saved from before
+        if (mSearchString != null) {
+            // Expand the view
+            searchView.setIconified(false);
+            menu.findItem(R.id.action_search).expandActionView();
+            // Set the query string
+            searchView.setQuery(mSearchString, false);
+            // Notify the adapter
+            applyFilter(mSearchString);
+        }
+
+        searchView.setOnQueryTextListener(new PodcastsFragment.SearchTextObserver());
+
+        super.onCreateOptionsMenu(menu, menuInflater);
+    }
 
     private void playPodcast(final int position, final boolean clearPlaylist) {
         final TrackModel podcast = mAdapter.getItem(position);
@@ -186,6 +231,36 @@ public class PodcastsFragment extends OdysseyFragment<TrackModel> implements Ada
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+    }
+
+    private class SearchTextObserver implements SearchView.OnQueryTextListener {
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+
+            if (query.isEmpty()) {
+                mSearchString = null;
+                removeFilter();
+            } else {
+                mSearchString = query;
+                applyFilter(query);
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            if (newText.isEmpty()) {
+                mSearchString = null;
+                removeFilter();
+            } else {
+                mSearchString = newText;
+                applyFilter(newText);
+            }
+
+            return true;
         }
     }
 }

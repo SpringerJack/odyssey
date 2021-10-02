@@ -39,11 +39,11 @@ public class PodcastsAdapter extends GenericSectionAdapter<TrackModel> {
 
     private final Context mContext;
 
-    private ArtworkManager mArtworkManager;
+    private final ArtworkManager mArtworkManager;
 
-    private int mListItemHeight;
+    private final int mListItemHeight;
 
-    private boolean mHideArtwork;
+    private final boolean mHideArtwork;
 
     public PodcastsAdapter(final Context context) {
         super();
@@ -55,6 +55,8 @@ public class PodcastsAdapter extends GenericSectionAdapter<TrackModel> {
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         mHideArtwork = sharedPreferences.getBoolean(context.getString(R.string.pref_hide_artwork_key), context.getResources().getBoolean(R.bool.pref_hide_artwork_default));
+
+        enableSections(false);
     }
 
     @Override
