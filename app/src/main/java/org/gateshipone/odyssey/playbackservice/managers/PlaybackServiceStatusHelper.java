@@ -157,7 +157,7 @@ public class PlaybackServiceStatusHelper {
                 broadcastPlaybackInformation(info);
 
                 // Only update cover image if album changed to preserve energy
-                if (mLastTrack == null || info.getCurrentTrack().getTrackAlbumId() != mLastTrack.getTrackAlbumId()) {
+                if (mLastTrack == null || info.getCurrentTrack().getTrackAlbumId() != mLastTrack.getTrackAlbumId() || info.getCurrentTrack().isPodcast()) {
                     mLastTrack = currentTrack;
 
                     if (!mHideArtwork) {
@@ -434,7 +434,7 @@ public class PlaybackServiceStatusHelper {
      * @param albumId Id to identify and compare the artwork with the current track
      */
     public void newAlbumArtworkReady(long albumId) {
-        if (mLastTrack != null && albumId == mLastTrack.getTrackAlbumId() && !mHideArtwork) {
+        if (mLastTrack != null && (albumId == mLastTrack.getTrackAlbumId()) && !mHideArtwork) {
             // Start cover loader
             startCoverImageTask();
         }

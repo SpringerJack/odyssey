@@ -58,6 +58,7 @@
         <item>@string/preference_default_view_my_music_artists</item>
         <item>@string/preference_default_view_my_music_albums</item>
         <item>@string/preference_default_view_my_music_tracks</item>
+        <item>@string/preference_default_view_my_music_podcasts</item>
         <item>@string/preference_default_view_my_music_playlists</item>
         <item>@string/preference_default_view_my_music_bookmarks</item>
         <item>@string/preference_default_view_my_music_files</item>

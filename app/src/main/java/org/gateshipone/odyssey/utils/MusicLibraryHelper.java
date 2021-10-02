@@ -557,7 +557,7 @@ public class MusicLibraryHelper {
     }
 
     public static List<TrackModel> getAllPodcasts(final Context context) {
-        final List<TrackModel> allTracks = new ArrayList<>();
+        final List<TrackModel> allPodcasts = new ArrayList<>();
 
         // filter non music
         final String[] whereVal = {"1"};
@@ -578,11 +578,12 @@ public class MusicLibraryHelper {
                     final String albumName = cursor.getString(cursor.getColumnIndex(ProjectionTracks.ALBUM));
                     final long albumId = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.ALBUM_ID));
                     final long id = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.ID));
+                    final int dateAdded = cursor.getInt(cursor.getColumnIndex(ProjectionTracks.DATE_ADDED));
 
                     final Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
 
                     // add the track
-                    allTracks.add(new TrackModel(trackName, artistName, artistId, albumName, albumId, duration, number, uri, id));
+                    allPodcasts.add(new TrackModel(trackName, artistName, artistId, albumName, albumId, duration, number, uri, id, dateAdded, true));
 
                 } while (cursor.moveToNext());
             }
@@ -590,7 +591,7 @@ public class MusicLibraryHelper {
             cursor.close();
         }
 
-        return allTracks;
+        return allPodcasts;
     }
 
     /**

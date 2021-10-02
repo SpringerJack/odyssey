@@ -162,6 +162,11 @@ public class CurrentPlaylistAdapter extends BaseAdapter implements ScrollSpeedAd
 
         // check if item should be a section view
         if (track != null) {
+            if (track.isPodcast()) {
+                // TODO decide what item it should be
+                return VIEW_TYPES.TYPE_SECTION_TRACK_ITEM.ordinal();
+            }
+
             TrackModel previousTrack;
             if (position > 0) {
                 previousTrack = (TrackModel) getItem(position - 1);

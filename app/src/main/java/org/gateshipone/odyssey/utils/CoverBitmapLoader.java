@@ -103,8 +103,9 @@ public class CoverBitmapLoader {
          */
         @Override
         public void run() {
-            // TODO maybe restrict this first check
-            if (!foundTrackImage()) {
+            if (mTrack.isPodcast()) {
+                loadTrackImage();
+            } else {
                 // At first get image independent of resolution (can be replaced later with higher resolution)
                 final AlbumModel album = MusicLibraryHelper.createAlbumModelFromId(mTrack.getTrackAlbumId(), mApplicationContext);
                 if (album == null) {
@@ -132,7 +133,7 @@ public class CoverBitmapLoader {
             }
         }
 
-        private boolean foundTrackImage() {
+        private void loadTrackImage() {
             Bitmap image = BitmapCache.getInstance().requestTrackImage(mTrack);
             if (image != null) {
                 mListener.receiveAlbumBitmap(image);
@@ -146,14 +147,10 @@ public class CoverBitmapLoader {
                     mListener.receiveAlbumBitmap(image);
                     // Replace image with higher resolution one
                     BitmapCache.getInstance().putTrackImage(mTrack, image);
-
-                    return true;
                 }
             } catch (ImageNotFoundException e) {
                 // nothing to do here
             }
-
-            return false;
         }
     }
 

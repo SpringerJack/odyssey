@@ -1129,7 +1129,7 @@ public class NowPlayingView extends RelativeLayout implements SeekBar.OnSeekBarC
 
 
         // Check if the album title changed. If true, start the cover generator thread.
-        if (currentTrack.getTrackAlbumId() != mLastTrack.getTrackAlbumId()) {
+        if (currentTrack.getTrackAlbumId() != mLastTrack.getTrackAlbumId() || currentTrack.isPodcast()) {
             // Show placeholder until image is loaded
             showPlaceholderImage();
 

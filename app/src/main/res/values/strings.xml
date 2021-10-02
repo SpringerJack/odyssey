@@ -211,6 +211,7 @@
     <string name="preference_default_view_my_music_artists">Artists</string>
     <string name="preference_default_view_my_music_albums">Albums</string>
     <string name="preference_default_view_my_music_tracks">All tracks</string>
+    <string name="preference_default_view_my_music_podcasts">Podcasts</string>
     <string name="preference_default_view_my_music_playlists">Playlists</string>
     <string name="preference_default_view_my_music_bookmarks">Bookmarks</string>
     <string name="preference_default_view_my_music_files">Files</string>

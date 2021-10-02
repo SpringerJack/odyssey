@@ -22,6 +22,7 @@
 
 package org.gateshipone.odyssey.models;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -60,7 +61,11 @@ public class ArtistModel implements GenericModel, Parcelable {
         mArtistName = in.readString();
         mArtistID = in.readLong();
         mMBId = in.readString();
-        mImageFetching = in.readByte() != 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mImageFetching = in.readBoolean();
+        } else {
+            mImageFetching = in.readByte() != 0;
+        }
     }
 
     @Override
@@ -68,7 +73,11 @@ public class ArtistModel implements GenericModel, Parcelable {
         dest.writeString(mArtistName);
         dest.writeLong(mArtistID);
         dest.writeString(mMBId);
-        dest.writeByte((byte) (mImageFetching ? 1 : 0));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(mImageFetching);
+        } else {
+            dest.writeByte((byte) (mImageFetching ? 1 : 0));
+        }
     }
 
     @Override

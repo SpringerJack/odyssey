@@ -74,6 +74,7 @@
     <string name="pref_view_my_music_artists_key" translatable="false">my_music_artists</string>
     <string name="pref_view_my_music_albums_key" translatable="false">my_music_albums</string>
     <string name="pref_view_my_music_tracks_key" translatable="false">my_music_tracks</string>
+    <string name="pref_view_podcasts_key" translatable="false">podcasts</string>
     <string name="pref_view_playlists_key" translatable="false">playlists</string>
     <string name="pref_view_bookmarks_key" translatable="false">bookmarks</string>
     <string name="pref_view_files_key" translatable="false">files</string>
@@ -141,6 +142,7 @@
         <item>@string/pref_view_my_music_artists_key</item>
         <item>@string/pref_view_my_music_albums_key</item>
         <item>@string/pref_view_my_music_tracks_key</item>
+        <item>@string/pref_view_podcasts_key</item>
         <item>@string/pref_view_playlists_key</item>
         <item>@string/pref_view_bookmarks_key</item>
         <item>@string/pref_view_files_key</item>

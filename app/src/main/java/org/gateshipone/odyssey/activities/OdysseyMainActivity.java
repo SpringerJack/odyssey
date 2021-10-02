@@ -985,6 +985,8 @@ public class OdysseyMainActivity extends GenericActivity
             navId = R.id.nav_my_music;
         } else if (defaultView.equals(getString(R.string.pref_view_my_music_tracks_key))) {
             navId = R.id.nav_my_music;
+        } else if (defaultView.equals(getString(R.string.pref_view_podcasts_key))) {
+            navId = R.id.nav_podcasts;
         } else if (defaultView.equals(getString(R.string.pref_view_playlists_key))) {
             navId = R.id.nav_saved_playlists;
         } else if (defaultView.equals(getString(R.string.pref_view_bookmarks_key))) {

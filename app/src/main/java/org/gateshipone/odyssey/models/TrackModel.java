@@ -23,6 +23,7 @@
 package org.gateshipone.odyssey.models;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -81,7 +82,9 @@ public class TrackModel implements GenericModel, Parcelable {
      */
     private final int mDateAdded;
 
-    public TrackModel(String name, String artistName, long artistId, String albumName, long albumId, long duration, int trackNumber, Uri uri, long trackId, int dateAdded) {
+    private final boolean mIsPodcast;
+
+    public TrackModel(String name, String artistName, long artistId, String albumName, long albumId, long duration, int trackNumber, Uri uri, long trackId, int dateAdded, boolean isPodcast) {
         if (name != null) {
             mTrackName = name;
         } else {
@@ -112,6 +115,15 @@ public class TrackModel implements GenericModel, Parcelable {
         mTrackId = trackId;
 
         mDateAdded = dateAdded;
+
+        mIsPodcast = isPodcast;
+    }
+
+    /**
+     * Constructs a TrackModel instance with the given parameters.
+     */
+    public TrackModel(String name, String artistName, long artistId, String albumName, long albumId, long duration, int trackNumber, Uri uri, long trackId, int dateAdded) {
+        this(name, artistName, artistId, albumName, albumId, duration, trackNumber, uri, trackId, dateAdded, false);
     }
 
     /**
@@ -144,6 +156,11 @@ public class TrackModel implements GenericModel, Parcelable {
         mTrackNumber = in.readInt();
         mTrackId = in.readLong();
         mDateAdded = in.readInt();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mIsPodcast = in.readBoolean();
+        } else {
+            mIsPodcast = (in.readByte() != 0);
+        }
     }
 
     /**
@@ -274,6 +291,10 @@ public class TrackModel implements GenericModel, Parcelable {
         return mDateAdded;
     }
 
+    public boolean isPodcast() {
+        return mIsPodcast;
+    }
+
     /**
      * Equals method for the TrackModel
      * <p/>
@@ -323,6 +344,11 @@ public class TrackModel implements GenericModel, Parcelable {
         dest.writeInt(mTrackNumber);
         dest.writeLong(mTrackId);
         dest.writeInt(mDateAdded);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(mIsPodcast);
+        } else {
+            dest.writeInt(mIsPodcast ? 1 : 0);
+        }
     }
 
     @NonNull
