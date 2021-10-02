@@ -154,11 +154,7 @@ public class MediaScannerService extends Service {
 
             // Cancel action
             Intent nextIntent = new Intent(MediaScannerService.ACTION_CANCEL_MEDIASCANNING);
-            int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                intentFlags |= PendingIntent.FLAG_IMMUTABLE;
-            }
-            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, nextIntent, intentFlags);
+            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Action cancelAction = new NotificationCompat.Action.Builder(R.drawable.ic_close_24dp, getString(R.string.dialog_action_cancel), nextPendingIntent).build();
 
             mBuilder.addAction(cancelAction);

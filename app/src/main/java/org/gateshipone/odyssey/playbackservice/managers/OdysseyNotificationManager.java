@@ -101,17 +101,13 @@ public class OdysseyNotificationManager {
             Intent mainIntent = new Intent(mContext, OdysseySplashActivity.class);
             mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             mainIntent.putExtra(OdysseyMainActivity.MAINACTIVITY_INTENT_EXTRA_REQUESTEDVIEW, OdysseyMainActivity.REQUESTEDVIEW.NOWPLAYING.ordinal());
-            int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                intentFlags |= PendingIntent.FLAG_IMMUTABLE;
-            }
-            PendingIntent contentPendingIntent = PendingIntent.getActivity(mContext, NOTIFICATION_INTENT_OPENGUI, mainIntent, intentFlags);
+            PendingIntent contentPendingIntent = PendingIntent.getActivity(mContext, NOTIFICATION_INTENT_OPENGUI, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             mNotificationBuilder.setContentIntent(contentPendingIntent);
 
             // Set pendingintents
             // Previous song action
             Intent prevIntent = new Intent(PlaybackService.ACTION_PREVIOUS);
-            PendingIntent prevPendingIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_PREVIOUS, prevIntent, intentFlags);
+            PendingIntent prevPendingIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_PREVIOUS, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Action prevAction = new NotificationCompat.Action.Builder(R.drawable.ic_skip_previous_48dp, "Previous", prevPendingIntent).build();
 
             // Pause/Play action
@@ -119,23 +115,23 @@ public class OdysseyNotificationManager {
             int playPauseIcon;
             if (state == PlaybackService.PLAYSTATE.PLAYING) {
                 Intent pauseIntent = new Intent(PlaybackService.ACTION_PAUSE);
-                playPauseIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_PLAYPAUSE, pauseIntent, intentFlags);
+                playPauseIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_PLAYPAUSE, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 playPauseIcon = R.drawable.ic_pause_48dp;
             } else {
                 Intent playIntent = new Intent(PlaybackService.ACTION_PLAY);
-                playPauseIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_PLAYPAUSE, playIntent, intentFlags);
+                playPauseIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_PLAYPAUSE, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 playPauseIcon = R.drawable.ic_play_arrow_48dp;
             }
             NotificationCompat.Action playPauseAction = new NotificationCompat.Action.Builder(playPauseIcon, "PlayPause", playPauseIntent).build();
 
             // Next song action
             Intent nextIntent = new Intent(PlaybackService.ACTION_NEXT);
-            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_NEXT, nextIntent, intentFlags);
+            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_NEXT, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Action nextAction = new NotificationCompat.Action.Builder(R.drawable.ic_skip_next_48dp, "Next", nextPendingIntent).build();
 
             // Quit action
             Intent quitIntent = new Intent(PlaybackService.ACTION_QUIT);
-            PendingIntent quitPendingIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_QUIT, quitIntent, intentFlags);
+            PendingIntent quitPendingIntent = PendingIntent.getBroadcast(mContext, NOTIFICATION_INTENT_QUIT, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             mNotificationBuilder.setDeleteIntent(quitPendingIntent);
 
             mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);

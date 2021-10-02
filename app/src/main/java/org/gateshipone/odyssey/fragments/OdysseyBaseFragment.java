@@ -168,7 +168,7 @@ abstract public class OdysseyBaseFragment<T extends GenericModel> extends Fragme
         }
 
         @Override
-        public void onConfigurationChanged(Configuration newConfig) {
+        public void onConfigurationChanged(@NonNull Configuration newConfig) {
         }
 
         @Override

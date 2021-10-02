@@ -43,6 +43,7 @@ import android.os.Process;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import org.gateshipone.odyssey.BuildConfig;
@@ -456,11 +457,7 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
         // Request the alarm manager and quit the alert with the given TIMEOUT_INTENT_QUIT_REQUEST_CODE
         AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         Intent quitIntent = new Intent(ACTION_QUIT);
-        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
-        }
-        PendingIntent quitPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_QUIT_REQUEST_CODE, quitIntent, intentFlags);
+        PendingIntent quitPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_QUIT_REQUEST_CODE, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         am.cancel(quitPI);
     }
 
@@ -499,11 +496,7 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
 
         final AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         final Intent quitIntent = new Intent(ACTION_SLEEPSTOP);
-        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
-        }
-        final PendingIntent sleepPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_SLEEP_REQUEST_CODE, quitIntent, intentFlags);
+        final PendingIntent sleepPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_SLEEP_REQUEST_CODE, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         am.set(AlarmManager.RTC, System.currentTimeMillis() + durationMS, sleepPI);
         mStopAfterCurrent = stopAfterCurrent;
     }
@@ -516,11 +509,7 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
 
         final AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         final Intent quitIntent = new Intent(ACTION_SLEEPSTOP);
-        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
-        }
-        final PendingIntent sleepPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_SLEEP_REQUEST_CODE, quitIntent, intentFlags);
+        final PendingIntent sleepPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_SLEEP_REQUEST_CODE, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         am.cancel(sleepPI);
     }
 
@@ -543,11 +532,7 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
             // Start an alert within the AlarmManager to quit this service after a timeout (defined in SERVICE_CANCEL_TIME)
             AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
             Intent quitIntent = new Intent(ACTION_QUIT);
-            int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                intentFlags |= PendingIntent.FLAG_IMMUTABLE;
-            }
-            PendingIntent quitPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_QUIT_REQUEST_CODE, quitIntent, intentFlags);
+            PendingIntent quitPI = PendingIntent.getBroadcast(this, TIMEOUT_INTENT_QUIT_REQUEST_CODE, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             am.set(AlarmManager.RTC, System.currentTimeMillis() + SERVICE_CANCEL_TIME, quitPI);
 
             // Broadcast simple.last.fm.scrobble broadcast to inform about pause state
@@ -2104,7 +2089,7 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
         }
 
         @Override
-        public void onConfigurationChanged(Configuration newConfig) {
+        public void onConfigurationChanged(@NonNull Configuration newConfig) {
 
         }
 

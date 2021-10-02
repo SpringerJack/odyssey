@@ -26,7 +26,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -88,11 +87,7 @@ public class PlaybackServiceStatusHelper {
         mCoverLoader = new CoverBitmapLoader(mPlaybackService, new BitmapCoverReceiver());
 
         // Register the button receiver
-        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            intentFlags |= PendingIntent.FLAG_IMMUTABLE;
-        }
-        PendingIntent mediaButtonPendingIntent = PendingIntent.getBroadcast(mPlaybackService, 0, new Intent(mPlaybackService, RemoteControlReceiver.class), intentFlags);
+        PendingIntent mediaButtonPendingIntent = PendingIntent.getBroadcast(mPlaybackService, 0, new Intent(mPlaybackService, RemoteControlReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
         mMediaSession.setMediaButtonReceiver(mediaButtonPendingIntent);
         mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS + MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 

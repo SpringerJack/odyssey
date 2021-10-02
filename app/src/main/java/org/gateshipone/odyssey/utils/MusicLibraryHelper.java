@@ -36,12 +36,10 @@ import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.models.AlbumModel;
 import org.gateshipone.odyssey.models.ArtistModel;
 import org.gateshipone.odyssey.models.FileModel;
-import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.utils.MediaStoreProjections.ProjectionAlbums;
 import org.gateshipone.odyssey.utils.MediaStoreProjections.ProjectionArtists;
 import org.gateshipone.odyssey.utils.MediaStoreProjections.ProjectionPlaylistTracks;
-import org.gateshipone.odyssey.utils.MediaStoreProjections.ProjectionPlaylists;
 import org.gateshipone.odyssey.utils.MediaStoreProjections.ProjectionTracks;
 
 import java.io.File;

@@ -44,7 +44,6 @@ import org.gateshipone.odyssey.adapter.SavedPlaylistsAdapter;
 import org.gateshipone.odyssey.listener.OnPlaylistSelectedListener;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
-import org.gateshipone.odyssey.utils.MusicLibraryHelper;
 import org.gateshipone.odyssey.viewmodels.GenericViewModel;
 import org.gateshipone.odyssey.viewmodels.PlaylistViewModel;
 
