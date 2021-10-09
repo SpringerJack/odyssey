@@ -123,8 +123,9 @@ public class PodcastsFragment extends OdysseyFragment<TrackModel> implements Ada
 
         if (mToolbarAndFABCallback != null) {
             // set toolbar behaviour and title
-            // TODO use resource for title
             mToolbarAndFABCallback.setupToolbar(getString(R.string.fragment_title_podcasts), false, true, false);
+            // set up play button
+            mToolbarAndFABCallback.setupFAB(null);
         }
     }
 
