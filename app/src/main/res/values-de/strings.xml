@@ -243,4 +243,8 @@
         \n\nDiese Einstellung wird verhindern, dass Odyssey die Wiedergabe aus dem Hintergrund automatisch fortsetzen kann.
         \n\nFalls Sie dieses Feature nutzen wollen, deaktivieren Sie bitte die Energiespareinstellungen für Odyssey.
     </string>
+    <string name="fragment_title_podcasts">Podcasts</string>
+    <string name="preference_default_view_my_music_podcasts">Podcasts</string>
+    <string name="context_menu_action_playpodcast">Podcast abspielen</string>
+    <string name="empty_podcasts_message">Keine Podcasts gefunden.</string>
 </resources>
