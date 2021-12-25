@@ -570,15 +570,15 @@ public class MusicLibraryHelper {
             if (cursor.moveToFirst()) {
 
                 do {
-                    final String trackName = cursor.getString(cursor.getColumnIndex(ProjectionTracks.TITLE));
-                    final long duration = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.DURATION));
-                    final int number = cursor.getInt(cursor.getColumnIndex(ProjectionTracks.TRACK));
-                    final String artistName = cursor.getString(cursor.getColumnIndex(ProjectionTracks.ARTIST));
-                    final long artistId = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.ARTIST_ID));
-                    final String albumName = cursor.getString(cursor.getColumnIndex(ProjectionTracks.ALBUM));
-                    final long albumId = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.ALBUM_ID));
-                    final long id = cursor.getLong(cursor.getColumnIndex(ProjectionTracks.ID));
-                    final int dateAdded = cursor.getInt(cursor.getColumnIndex(ProjectionTracks.DATE_ADDED));
+                    final String trackName = cursor.getString(cursor.getColumnIndexOrThrow(ProjectionTracks.TITLE));
+                    final long duration = cursor.getLong(cursor.getColumnIndexOrThrow(ProjectionTracks.DURATION));
+                    final int number = cursor.getInt(cursor.getColumnIndexOrThrow(ProjectionTracks.TRACK));
+                    final String artistName = cursor.getString(cursor.getColumnIndexOrThrow(ProjectionTracks.ARTIST));
+                    final long artistId = cursor.getLong(cursor.getColumnIndexOrThrow(ProjectionTracks.ARTIST_ID));
+                    final String albumName = cursor.getString(cursor.getColumnIndexOrThrow(ProjectionTracks.ALBUM));
+                    final long albumId = cursor.getLong(cursor.getColumnIndexOrThrow(ProjectionTracks.ALBUM_ID));
+                    final long id = cursor.getLong(cursor.getColumnIndexOrThrow(ProjectionTracks.ID));
+                    final int dateAdded = cursor.getInt(cursor.getColumnIndexOrThrow(ProjectionTracks.DATE_ADDED));
 
                     final Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
 
