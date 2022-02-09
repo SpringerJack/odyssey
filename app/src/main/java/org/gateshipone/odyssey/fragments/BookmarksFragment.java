@@ -63,7 +63,7 @@ public class BookmarksFragment extends OdysseyFragment<BookmarkModel> implements
         // get listview
         mListView = view.findViewById(R.id.list_linear_listview);
 
-        mAdapter = new BookmarksAdapter(getActivity());
+        mAdapter = new BookmarksAdapter(requireActivity());
 
         mListView.setAdapter(mAdapter);
 
@@ -83,7 +83,11 @@ public class BookmarksFragment extends OdysseyFragment<BookmarkModel> implements
 
     @Override
     GenericViewModel<BookmarkModel> getViewModel() {
-        return new ViewModelProvider(this, new BookmarkViewModel.BookmarkViewModelFactory(getActivity().getApplication(), false)).get(BookmarkViewModel.class);
+        return new ViewModelProvider(
+                this,
+                new BookmarkViewModel.BookmarkViewModelFactory(
+                        requireActivity().getApplication(), false)
+        ).get(BookmarkViewModel.class);
     }
 
     /**
@@ -116,7 +120,7 @@ public class BookmarksFragment extends OdysseyFragment<BookmarkModel> implements
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
+        MenuInflater inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.context_menu_bookmarks_fragment, menu);
     }
 
@@ -159,7 +163,7 @@ public class BookmarksFragment extends OdysseyFragment<BookmarkModel> implements
 
         // resume state
         try {
-            ((GenericActivity) getActivity()).getPlaybackService().resumeBookmark(bookmark.getId());
+            ((GenericActivity) requireActivity()).getPlaybackService().resumeBookmark(bookmark.getId());
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -175,7 +179,7 @@ public class BookmarksFragment extends OdysseyFragment<BookmarkModel> implements
         // identify current bookmark
         BookmarkModel bookmark = mAdapter.getItem(position);
 
-        OdysseyDatabaseManager.getInstance(getContext()).removeState(bookmark.getId());
+        OdysseyDatabaseManager.getInstance(requireContext()).removeState(bookmark.getId());
 
         refreshContent();
     }

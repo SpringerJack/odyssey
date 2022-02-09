@@ -29,7 +29,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -63,7 +62,7 @@ public class ChoosePlaylistDialog extends DialogFragment {
         try {
             mSaveCallback = (OnSaveDialogListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnSaveDialogListener");
+            throw new ClassCastException(context + " must implement OnSaveDialogListener");
         }
     }
 
@@ -74,9 +73,9 @@ public class ChoosePlaylistDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
 
-        mPlaylistsListViewAdapter = new SavedPlaylistsAdapter(getActivity());
+        mPlaylistsListViewAdapter = new SavedPlaylistsAdapter(requireActivity());
 
         builder
                 .setTitle(R.string.dialog_choose_playlist)
@@ -85,7 +84,7 @@ public class ChoosePlaylistDialog extends DialogFragment {
                     if (which == 0) {
                         // open save dialog to create a new playlist
                         SaveDialog saveDialog = SaveDialog.newInstance(SaveDialog.OBJECTTYPE.PLAYLIST);
-                        saveDialog.show(((AppCompatActivity) getContext()).getSupportFragmentManager(), "SaveDialog");
+                        saveDialog.show(requireActivity().getSupportFragmentManager(), "SaveDialog");
                     } else {
                         // override existing playlist
                         PlaylistModel playlist = mPlaylistsListViewAdapter.getItem(which);
@@ -95,11 +94,11 @@ public class ChoosePlaylistDialog extends DialogFragment {
                 })
                 .setNegativeButton(R.string.dialog_action_cancel, (dialog, id) -> {
                     // User cancelled the dialog dont save object
-                    getDialog().cancel();
+                    requireDialog().cancel();
                 });
 
         // setup playlist ViewModel
-        final PlaylistViewModel model = new ViewModelProvider(this, new PlaylistViewModel.PlaylistViewModelFactory(getActivity().getApplication(), true, true))
+        final PlaylistViewModel model = new ViewModelProvider(this, new PlaylistViewModel.PlaylistViewModelFactory(requireActivity().getApplication(), true, true))
                 .get(PlaylistViewModel.class);
         model.getData()
                 .observe(this, data -> mPlaylistsListViewAdapter.swapModel(data));
@@ -107,7 +106,7 @@ public class ChoosePlaylistDialog extends DialogFragment {
 
         // set divider
         AlertDialog dlg = builder.create();
-        dlg.getListView().setDivider(new ColorDrawable(ThemeUtils.getThemeColor(getContext(), R.attr.odyssey_color_divider)));
+        dlg.getListView().setDivider(new ColorDrawable(ThemeUtils.getThemeColor(requireActivity(), R.attr.odyssey_color_divider)));
         dlg.getListView().setDividerHeight(getResources().getDimensionPixelSize(R.dimen.list_divider_size));
 
         return dlg;

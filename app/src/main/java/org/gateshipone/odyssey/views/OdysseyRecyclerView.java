@@ -34,6 +34,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Objects;
+
 /**
  * Subclass of the standard recyclerview that adds a convenience method for a item clicklistener
  * and adds the option to handle a proper context menu.
@@ -67,7 +69,7 @@ public class OdysseyRecyclerView extends RecyclerView {
     public boolean showContextMenuForChild(View originalView) {
         final int longPressPosition = getChildLayoutPosition(originalView);
         if (longPressPosition >= 0) {
-            final long longPressId = getAdapter().getItemId(longPressPosition);
+            final long longPressId = Objects.requireNonNull(getAdapter()).getItemId(longPressPosition);
             mContextMenuInfo = new RecyclerViewContextMenuInfo(longPressPosition, longPressId);
             return super.showContextMenuForChild(originalView);
         }

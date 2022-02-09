@@ -68,7 +68,7 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext());
         final String viewAppearance = sharedPref.getString(getString(R.string.pref_view_library_key), getString(R.string.pref_library_view_default));
 
         final boolean useList = viewAppearance.equals(getString(R.string.pref_library_view_list_key));
@@ -84,7 +84,7 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext());
         final String viewAppearance = sharedPref.getString(getString(R.string.pref_view_library_key), getString(R.string.pref_library_view_default));
 
         boolean useList = viewAppearance.equals(getString(R.string.pref_library_view_list_key));
@@ -100,12 +100,12 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
         // get swipe layout
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         // set swipe colors
-        mSwipeRefreshLayout.setColorSchemeColors(ThemeUtils.getThemeColor(getContext(), R.attr.colorAccent),
-                ThemeUtils.getThemeColor(getContext(), R.attr.colorPrimary));
+        mSwipeRefreshLayout.setColorSchemeColors(ThemeUtils.getThemeColor(requireContext(), R.attr.colorAccent),
+                ThemeUtils.getThemeColor(requireContext(), R.attr.colorPrimary));
         // set swipe refresh listener
         mSwipeRefreshLayout.setOnRefreshListener(this::refreshContent);
 
-        mAdapter = new ArtistsAdapter(getActivity(), useList);
+        mAdapter = new ArtistsAdapter(requireActivity(), useList);
 
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(new ScrollSpeedListener(mAdapter));
@@ -135,21 +135,24 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
 
     @Override
     GenericViewModel<ArtistModel> getViewModel() {
-        return new ViewModelProvider(this, new ArtistViewModel.ArtistViewModelFactory(getActivity().getApplication())).get(ArtistViewModel.class);
+        return new ViewModelProvider(
+                this,
+                new ArtistViewModel.ArtistViewModelFactory(requireActivity().getApplication())
+        ).get(ArtistViewModel.class);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        ArtworkManager.getInstance(getContext()).registerOnNewArtistImageListener((ArtistsAdapter) mAdapter);
+        ArtworkManager.getInstance(requireContext()).registerOnNewArtistImageListener((ArtistsAdapter) mAdapter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        ArtworkManager.getInstance(getContext()).unregisterOnNewArtistImageListener((ArtistsAdapter) mAdapter);
+        ArtworkManager.getInstance(requireContext()).unregisterOnNewArtistImageListener((ArtistsAdapter) mAdapter);
     }
 
     /**
@@ -164,7 +167,7 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
         try {
             mArtistSelectedCallback = (OnArtistSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnArtistSelectedListener");
+            throw new ClassCastException(context + " must implement OnArtistSelectedListener");
         }
     }
 
@@ -183,7 +186,7 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
         // to query artists. AlbumArtists vs. Artists MediaStore table.
         if (artistId == -1) {
             // Try to get the artistId manually because it seems to be missing
-            artistId = MusicLibraryHelper.getArtistIDFromName(artist, getActivity());
+            artistId = MusicLibraryHelper.getArtistIDFromName(artist, requireActivity());
         }
 
         Bitmap bitmap = null;
@@ -203,7 +206,7 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
+        MenuInflater inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.context_menu_artists_fragment, menu);
     }
 
@@ -249,17 +252,17 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
 
         if (artistId == -1) {
             // Try to get the artistId manually because it seems to be missing
-            artistId = MusicLibraryHelper.getArtistIDFromName(artist, getActivity());
+            artistId = MusicLibraryHelper.getArtistIDFromName(artist, requireActivity());
         }
 
         // Read order preference
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String albumOrderKey = sharedPref.getString(getString(R.string.pref_album_sort_order_key), getString(R.string.pref_artist_albums_sort_default));
         String trackOrderKey = sharedPref.getString(getString(R.string.pref_album_tracks_sort_order_key), getString(R.string.pref_album_tracks_sort_default));
 
         // enqueue artist
         try {
-            ((GenericActivity) getActivity()).getPlaybackService().enqueueArtist(artistId, albumOrderKey, trackOrderKey);
+            ((GenericActivity) requireActivity()).getPlaybackService().enqueueArtist(artistId, albumOrderKey, trackOrderKey);
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -282,17 +285,17 @@ public class ArtistsFragment extends OdysseyFragment<ArtistModel> implements Ada
 
         if (artistId == -1) {
             // Try to get the artistId manually because it seems to be missing
-            artistId = MusicLibraryHelper.getArtistIDFromName(artist, getActivity());
+            artistId = MusicLibraryHelper.getArtistIDFromName(artist, requireActivity());
         }
 
         // Read order preference
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String albumOrderKey = sharedPref.getString(getString(R.string.pref_album_sort_order_key), getString(R.string.pref_artist_albums_sort_default));
         String trackOrderKey = sharedPref.getString(getString(R.string.pref_album_tracks_sort_order_key), getString(R.string.pref_album_tracks_sort_default));
 
         // enqueue artist
         try {
-            ((GenericActivity) getActivity()).getPlaybackService().playArtist(artistId, albumOrderKey, trackOrderKey);
+            ((GenericActivity) requireActivity()).getPlaybackService().playArtist(artistId, albumOrderKey, trackOrderKey);
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

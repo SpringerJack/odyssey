@@ -45,6 +45,8 @@ import org.gateshipone.odyssey.viewmodels.AlbumViewModel;
 import org.gateshipone.odyssey.viewmodels.GenericViewModel;
 import org.gateshipone.odyssey.viewmodels.SearchViewModel;
 
+import java.util.List;
+
 public class AlbumsFragment extends GenericAlbumsFragment {
 
     /**
@@ -79,13 +81,13 @@ public class AlbumsFragment extends GenericAlbumsFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     GenericViewModel<AlbumModel> getViewModel() {
-        return new ViewModelProvider(this, new AlbumViewModel.AlbumViewModelFactory(getActivity().getApplication(), false)).get(AlbumViewModel.class);
+        return new ViewModelProvider(
+                this,
+                new AlbumViewModel.AlbumViewModelFactory(
+                        requireActivity().getApplication(),
+                        false)
+        ).get(AlbumViewModel.class);
     }
 
     /**
@@ -100,7 +102,7 @@ public class AlbumsFragment extends GenericAlbumsFragment {
         try {
             mArtistSelectedCallback = (OnArtistSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnArtistSelectedListener");
+            throw new ClassCastException(context + " must implement OnArtistSelectedListener");
         }
     }
 
@@ -110,7 +112,7 @@ public class AlbumsFragment extends GenericAlbumsFragment {
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
+        MenuInflater inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.context_menu_albums_fragment, menu);
     }
 
@@ -155,7 +157,7 @@ public class AlbumsFragment extends GenericAlbumsFragment {
         AlbumModel clickedAlbum = mAdapter.getItem(position);
 
         String artistTitle = clickedAlbum.getArtistName();
-        long artistId = MusicLibraryHelper.getArtistIDFromName(artistTitle, getActivity());
+        long artistId = MusicLibraryHelper.getArtistIDFromName(artistTitle, requireActivity());
 
         // Send the event to the host activity
         mArtistSelectedCallback.onArtistSelected(new ArtistModel(artistTitle, artistId), null);

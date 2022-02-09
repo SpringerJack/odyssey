@@ -37,6 +37,7 @@ import org.gateshipone.odyssey.utils.GridItemDecoration;
 import org.gateshipone.odyssey.views.OdysseyRecyclerView;
 
 import java.util.List;
+import java.util.Objects;
 
 abstract public class OdysseyRecyclerFragment<T extends GenericModel, VH extends RecyclerView.ViewHolder> extends OdysseyBaseFragment<T> {
 
@@ -114,8 +115,8 @@ abstract public class OdysseyRecyclerFragment<T extends GenericModel, VH extends
      * Make sure to call this method after the recyclerview was set.
      */
     protected void setLinearLayoutManagerAndDecoration() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
     }
 
@@ -127,7 +128,7 @@ abstract public class OdysseyRecyclerFragment<T extends GenericModel, VH extends
      * This method will also add an observer to adjust the spancount of the grid after an orientation change.
      */
     protected void setGridLayoutManagerAndDecoration() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
 
         final int halfSpacingOffsetPX = getResources().getDimensionPixelSize(R.dimen.grid_half_spacing);
         final int spacingOffsetPX = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
@@ -150,13 +151,13 @@ abstract public class OdysseyRecyclerFragment<T extends GenericModel, VH extends
                     final int newSpanCount = Math.max((int) Math.floor(recyclerViewWidth / gridItemWidth), 2);
 
                     final GridLayoutManager layoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
-                    layoutManager.setSpanCount(newSpanCount);
+                    Objects.requireNonNull(layoutManager).setSpanCount(newSpanCount);
 
                     mRecyclerView.requestLayout();
 
                     // pass the columnWidth to the adapter to adjust the size of the griditems
                     final int columnWidth = recyclerViewWidth / newSpanCount;
-                    ((GenericRecyclerViewAdapter<?, ?>) mRecyclerView.getAdapter()).setItemSize(columnWidth);
+                    ((GenericRecyclerViewAdapter<?, ?>) Objects.requireNonNull(mRecyclerView.getAdapter())).setItemSize(columnWidth);
                 }
             }
         });

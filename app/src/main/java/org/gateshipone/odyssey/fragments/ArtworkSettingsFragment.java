@@ -32,7 +32,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -69,7 +68,7 @@ public class ArtworkSettingsFragment extends PreferenceFragmentCompat implements
         // add listener to clear album data
         Preference clearAlbums = findPreference(getString(R.string.pref_clear_album_key));
         clearAlbums.setOnPreferenceClickListener(preference -> {
-            final Context context = getContext();
+            final Context context = requireContext();
             ArtworkDatabaseManager.getInstance(context).clearAlbumImages();
             return true;
         });
@@ -77,27 +76,27 @@ public class ArtworkSettingsFragment extends PreferenceFragmentCompat implements
         // add listener to clear artist data
         Preference clearArtist = findPreference(getString(R.string.pref_clear_artist_key));
         clearArtist.setOnPreferenceClickListener(preference -> {
-            final Context context = getContext();
+            final Context context = requireContext();
             ArtworkDatabaseManager.getInstance(context).clearArtistImages();
             return true;
         });
 
         Preference clearBlockedAlbums = findPreference(getString(R.string.pref_clear_blocked_album_key));
         clearBlockedAlbums.setOnPreferenceClickListener(preference -> {
-            ArtworkDatabaseManager.getInstance(getContext()).clearBlockedAlbumImages();
+            ArtworkDatabaseManager.getInstance(requireContext()).clearBlockedAlbumImages();
             return true;
         });
 
         Preference clearBlockedArtists = findPreference(getString(R.string.pref_clear_blocked_artist_key));
         clearBlockedArtists.setOnPreferenceClickListener(preference -> {
-            ArtworkDatabaseManager.getInstance(getContext()).clearBlockedArtistImages();
+            ArtworkDatabaseManager.getInstance(requireContext()).clearBlockedArtistImages();
             return true;
         });
 
         Preference bulkLoad = findPreference(getString(R.string.pref_bulk_load_key));
         bulkLoad.setOnPreferenceClickListener(preference -> {
             BulkDownloaderDialog bulkDownloaderDialog = BulkDownloaderDialog.newInstance(R.string.bulk_download_notice_title, R.string.bulk_download_notice_text, R.string.error_dialog_ok_action);
-            bulkDownloaderDialog.show(((AppCompatActivity) getContext()).getSupportFragmentManager(), "BulkDownloaderDialog");
+            bulkDownloaderDialog.show(requireActivity().getSupportFragmentManager(), "BulkDownloaderDialog");
 
             return true;
         });
@@ -115,7 +114,7 @@ public class ArtworkSettingsFragment extends PreferenceFragmentCompat implements
         try {
             mToolbarAndFABCallback = (ToolbarAndFABCallback) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement ToolbarAndFABCallback");
+            throw new ClassCastException(context + " must implement ToolbarAndFABCallback");
         }
     }
 
@@ -154,14 +153,14 @@ public class ArtworkSettingsFragment extends PreferenceFragmentCompat implements
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.odyssey_artwork_settings);
-        PreferenceManager.setDefaultValues(getActivity(), R.xml.odyssey_artwork_settings, false);
+        PreferenceManager.setDefaultValues(requireActivity(), R.xml.odyssey_artwork_settings, false);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         // we have to set the background color at this point otherwise we loose the ripple effect
-        view.setBackgroundColor(ThemeUtils.getThemeColor(getContext(), R.attr.odyssey_color_background));
+        view.setBackgroundColor(ThemeUtils.getThemeColor(requireContext(), R.attr.odyssey_color_background));
 
         return view;
     }
@@ -177,9 +176,9 @@ public class ArtworkSettingsFragment extends PreferenceFragmentCompat implements
 
         if (key.equals(albumProviderKey) || key.equals(artistProviderKey) || key.equals(downloadWifiOnlyKey)) {
             Intent nextIntent = new Intent(BulkDownloadService.ACTION_CANCEL_BULKDOWNLOAD);
-            getActivity().getApplicationContext().sendBroadcast(nextIntent);
+            requireActivity().getApplicationContext().sendBroadcast(nextIntent);
 
-            ArtworkManager artworkManager = ArtworkManager.getInstance(getContext());
+            ArtworkManager artworkManager = ArtworkManager.getInstance(requireContext());
 
             artworkManager.cancelAllRequests();
 
@@ -193,7 +192,7 @@ public class ArtworkSettingsFragment extends PreferenceFragmentCompat implements
         } else if (key.equals(getString(R.string.pref_hide_artwork_key))) {
             boolean hideArtwork = sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_hide_artwork_default));
             try {
-                ((GenericActivity) getActivity()).getPlaybackService().hideArtworkChanged(hideArtwork);
+                ((GenericActivity) requireActivity()).getPlaybackService().hideArtworkChanged(hideArtwork);
             } catch (RemoteException e) {
 
             }

@@ -51,8 +51,8 @@ public class AlbumArtistView extends ViewSwitcher {
      */
     private static final int VIEW_SWITCH_TIME = 7500;
 
-    ImageView mAlbumImage;
-    ImageView mArtistImage;
+    final ImageView mAlbumImage;
+    final ImageView mArtistImage;
 
     boolean mAlbumImageAvailable;
     boolean mArtistImageAvailable;

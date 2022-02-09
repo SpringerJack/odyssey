@@ -84,12 +84,12 @@ public class AllTracksFragment extends OdysseyFragment<TrackModel> implements Ad
         // get swipe layout
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         // set swipe colors
-        mSwipeRefreshLayout.setColorSchemeColors(ThemeUtils.getThemeColor(getContext(), R.attr.colorAccent),
-                ThemeUtils.getThemeColor(getContext(), R.attr.colorPrimary));
+        mSwipeRefreshLayout.setColorSchemeColors(ThemeUtils.getThemeColor(requireContext(), R.attr.colorAccent),
+                ThemeUtils.getThemeColor(requireContext(), R.attr.colorPrimary));
         // set swipe refresh listener
         mSwipeRefreshLayout.setOnRefreshListener(this::refreshContent);
 
-        mAdapter = new TracksAdapter(getActivity());
+        mAdapter = new TracksAdapter(requireActivity());
 
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
@@ -102,8 +102,8 @@ public class AllTracksFragment extends OdysseyFragment<TrackModel> implements Ad
 
         registerForContextMenu(mListView);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mClickAction = PreferenceHelper.getClickAction(sharedPreferences, getContext());
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        mClickAction = PreferenceHelper.getClickAction(sharedPreferences, requireContext());
 
         // setup observer for the live data
         getViewModel().getData().observe(getViewLifecycleOwner(), this::onDataReady);
@@ -119,13 +119,12 @@ public class AllTracksFragment extends OdysseyFragment<TrackModel> implements Ad
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     GenericViewModel<TrackModel> getViewModel() {
-        return new ViewModelProvider(this, new TrackViewModel.TrackViewModelFactory(getActivity().getApplication())).get(TrackViewModel.class);
+        return new ViewModelProvider(
+                this,
+                new TrackViewModel.TrackViewModelFactory(
+                        requireActivity().getApplication())
+        ).get(TrackViewModel.class);
     }
 
     /**
@@ -140,7 +139,7 @@ public class AllTracksFragment extends OdysseyFragment<TrackModel> implements Ad
         try {
             mArtistSelectedCallback = (OnArtistSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnArtistSelectedListener");
+            throw new ClassCastException(context + " must implement OnArtistSelectedListener");
         }
     }
 
@@ -171,7 +170,7 @@ public class AllTracksFragment extends OdysseyFragment<TrackModel> implements Ad
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
+        MenuInflater inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.context_menu_all_tracks_fragment, menu);
     }
 
@@ -219,7 +218,7 @@ public class AllTracksFragment extends OdysseyFragment<TrackModel> implements Ad
         TrackModel clickedTrack = mAdapter.getItem(position);
         String artistTitle = clickedTrack.getTrackArtistName();
 
-        long artistId = MusicLibraryHelper.getArtistIDFromName(artistTitle, getActivity());
+        long artistId = MusicLibraryHelper.getArtistIDFromName(artistTitle, requireActivity());
 
         // Send the event to the host activity
         mArtistSelectedCallback.onArtistSelected(new ArtistModel(artistTitle, artistId), null);
@@ -235,7 +234,7 @@ public class AllTracksFragment extends OdysseyFragment<TrackModel> implements Ad
         TrackModel track = mAdapter.getItem(position);
 
         try {
-            ((GenericActivity) getActivity()).getPlaybackService().playTrack(track, clearPlaylist);
+            ((GenericActivity) requireActivity()).getPlaybackService().playTrack(track, clearPlaylist);
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -253,7 +252,7 @@ public class AllTracksFragment extends OdysseyFragment<TrackModel> implements Ad
         TrackModel track = mAdapter.getItem(position);
 
         try {
-            ((GenericActivity) getActivity()).getPlaybackService().enqueueTrack(track, asNext);
+            ((GenericActivity) requireActivity()).getPlaybackService().enqueueTrack(track, asNext);
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

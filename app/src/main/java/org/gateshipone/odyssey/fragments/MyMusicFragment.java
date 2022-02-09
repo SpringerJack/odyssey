@@ -56,6 +56,8 @@ import org.gateshipone.odyssey.listener.ToolbarAndFABCallback;
 import org.gateshipone.odyssey.utils.ThemeUtils;
 import org.gateshipone.odyssey.viewmodels.SearchViewModel;
 
+import java.util.Objects;
+
 public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelectedListener {
 
     /**
@@ -159,7 +161,7 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
             if (drawable != null) {
                 Drawable icon = DrawableCompat.wrap(drawable);
                 DrawableCompat.setTintList(icon, tabColors);
-                tabLayout.getTabAt(i).setIcon(icon);
+                Objects.requireNonNull(tabLayout.getTabAt(i)).setIcon(icon);
             }
         }
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -214,13 +216,13 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
         try {
             mToolbarAndFABCallback = (ToolbarAndFABCallback) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement ToolbarAndFABCallback");
+            throw new ClassCastException(context + " must implement ToolbarAndFABCallback");
         }
 
         try {
             mRecentAlbumsSelectedListener = (OnRecentAlbumsSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnRecentAlbumsSelectedListener");
+            throw new ClassCastException(context + " must implement OnRecentAlbumsSelectedListener");
         }
 
         if (mSearchView != null) {
@@ -303,7 +305,7 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
         final OdysseyFragment<?> fragment = mMyMusicPagerAdapter.getRegisteredFragment(tab.getPosition());
 
         if (fragment != null) {
-            fragment.getContent();
+//            fragment.getContent();
 
             // Disable memory trimming to prevent removing the shown data
             fragment.enableMemoryTrimming(false);
@@ -336,7 +338,7 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
      */
     public void refresh() {
         // reload tabs
-        mMyMusicPagerAdapter.notifyDataSetChanged();
+//        mMyMusicPagerAdapter.notifyDataSetChanged();
     }
 
     /**

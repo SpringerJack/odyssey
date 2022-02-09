@@ -103,7 +103,7 @@ abstract public class OdysseyFragment<T extends GenericModel> extends OdysseyBas
             mListViewState = null;
         }
 
-        updateView();
+//        updateView();
     }
 
     /**

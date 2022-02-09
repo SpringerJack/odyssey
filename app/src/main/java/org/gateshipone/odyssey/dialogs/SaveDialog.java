@@ -78,7 +78,7 @@ public class SaveDialog extends DialogFragment {
         try {
             mSaveCallback = (OnSaveDialogListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnSaveDialogListener");
+            throw new ClassCastException(context + " must implement OnSaveDialogListener");
         }
     }
 
@@ -89,7 +89,7 @@ public class SaveDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
 
         // read arguments to identify type of the object which should be saved
         Bundle mArgs = getArguments();

@@ -49,7 +49,7 @@ public class ControlObject {
         ODYSSEY_SET_SMARTRANDOM
     }
 
-    private PLAYBACK_ACTION mAction;
+    private final PLAYBACK_ACTION mAction;
     private boolean mBoolparam;
     private int mIntparam;
     private String mStringparam;
